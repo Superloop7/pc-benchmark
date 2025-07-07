@@ -16,7 +16,7 @@ def disk_read_method(filepath):
         f.read()
 
 
-def ssd_test(total_size=1073741824 * 16):
+def ssd_test(total_size=1073741824):
     # create all parameter
     file_path = "testfile.txt"
     max_time = 0.5
