@@ -51,7 +51,7 @@ class HardDiskTest:
         total_written_round = 0
         write_start = time.perf_counter()
 
-        print(f"[INFO] Starting HardDisk write test ...")
+        print(f"[INFO] Starting HardDisk Write test ...")
         # write the binary file
         with open(self.file_path, "wb") as file:
             while True:
@@ -78,7 +78,7 @@ class HardDiskTest:
 
     def harddisk_read_test(self) -> HardDiskResult:
         # Read test
-        print(f"[INFO] Starting HardDisk write test ...")
+        print(f"[INFO] Starting HardDisk Read test ...")
 
         read_start = time.perf_counter()
         with open(self.file_path, "rb") as file:
