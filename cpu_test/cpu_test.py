@@ -13,9 +13,9 @@ class TestResult:
 
     def __str__(self):
         if self.mode == 'single':
-            return f"The single core test is finished your single thred score is {self.scores:.4f})"
+            return f"[RESULT] Your single-core score is {self.scores:.4f}."
         else:
-            return f"The multiple cores test is finished: your multiple thread score is ({self.scores:.4f})"
+            return f"[RESULT] Your multiple-cores score is ({self.cpu_count} cores: {self.scores:.4f})."
 
 
 class CpuTest:
@@ -37,22 +37,22 @@ class CpuTest:
         return round_count
 
     def run_single(self) -> TestResult:
-        print("The single core test is start, and will run about 20 seconds ...")
+        print("[INFO] Starting single-core test for 20 seconds...")
         total_rounds = self.single_core_work(self.calculate_time)
         single_scores = total_rounds / 1e5
-        print("The single core test is finished")
+        print("[INFO] Single-core test complete.")
         return TestResult(mode="single", scores = single_scores)
 
-    def run_multi(self) -> TestResult:
+    def run_multi(self, cpu_count=None) -> TestResult:
         cpu_count = os.cpu_count()
         if cpu_count is None:
             cpu_count = 1
-            print("Detected failed the default cpu will be seted as 1")
+            print("[INFO] Detected failed, the cpu will be set as 1")
         elif cpu_count == 1:
-            print(f"Your pc have {cpu_count} core")
+            print(f"[INFO] Detected {cpu_count} logical CPU core")
         else:
-            print(f"Your pc has {cpu_count} cores")
-        print("The multiple cores test is start, and will run about 20 seconds ...")
+            print(f"[INFO] Detected {cpu_count} logical CPU cores")
+        print("[INFO] Starting multi-core test for 20 seconds...")
         
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
             single_run = [executor.submit(self.single_core_work, self.calculate_time) for _ in range(cpu_count)]
@@ -60,15 +60,15 @@ class CpuTest:
 
         total_rounds = sum(round_list)
         multi_scores = total_rounds / 1e5
-        print("The multiple cores test is finished")
-        return TestResult(mode="multi", scores = multi_scores)
+        print("[INFO] Multi-core test complete.")
+        return TestResult(mode="multi", scores = multi_scores, cpu_count= cpu_count)
 
     def run_all(self):
         single = self.run_single()
-        multi = self.run_multi()
         print(single)
+        multi = self.run_multi()
         print(multi)
-
+        return single, multi
 
 if __name__ == "__main__":
     tester = CpuTest(calculate_time=20)
