@@ -1,8 +1,29 @@
 import cpu_test.cpu_test as cpu_test
 import hard_disk_test.harddisk_test as harddisk_test
-import webbrowser, os
+import webbrowser
+import os
+import multiprocessing
+import signal, sys
+
+
+def handle_exit(signum, frame):
+    print("\n[INFO] Program exited.")
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, handle_exit)
+signal.signal(signal.SIGTERM, handle_exit)
+
+if sys.platform.startswith("win"):
+    try:
+        import win32api
+
+        win32api.SetConsoleCtrlHandler(lambda x: handle_exit(x, None), True)
+    except:
+        pass
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     cpu_tester = cpu_test.CpuTest(calculate_time=20)
     single_core_result = cpu_tester.run_single()
     multi_cores_result = cpu_tester.run_multi()

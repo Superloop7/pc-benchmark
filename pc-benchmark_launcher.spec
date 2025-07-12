@@ -5,7 +5,7 @@ a = Analysis(
     ['pc-benchmark_launcher.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('index.html', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
