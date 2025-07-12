@@ -1,5 +1,5 @@
-import cpu_test
-import ssd_test
+import cpu_test.cpu_test as cpu_test
+import hard_disk_test.ssd_test as ssd_test
 import webbrowser
 
 
