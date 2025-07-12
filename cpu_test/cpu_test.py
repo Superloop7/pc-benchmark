@@ -13,9 +13,9 @@ class TestResult:
 
     def __str__(self):
         if self.mode == 'single':
-            return f"[RESULT] Your single-core score is {self.scores:.4f}."
+            return f"[RESULT] Single-core score is {self.scores:.4f}."
         else:
-            return f"[RESULT] Your multiple-cores score is ({self.cpu_count} cores: {self.scores:.4f})."
+            return f"[RESULT] Multiple-cores score is ({self.cpu_count} cores: {self.scores:.4f})."
 
 
 class CpuTest:
