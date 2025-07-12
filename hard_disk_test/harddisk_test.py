@@ -1,6 +1,7 @@
 import os, time
 from dataclasses import dataclass
 
+
 # @dataclass can replace __init__
 @dataclass
 class HardDiskResult:
@@ -35,7 +36,8 @@ class HardDiskResult:
             return f"[HARDDISK RESULT] Write Speed : {self.write_speed:.2f} MB/s"
         elif self.mode == "read_test":
             return f"[HARDDISK RESULT] Read  Speed : {self.read_speed:.2f} MB/s"
-    
+
+
 class HardDiskTest:
     def __init__(self, file_path="write_test.bin", duration=1, block_size=256 * 1024):
         self.file_path = file_path
@@ -46,7 +48,7 @@ class HardDiskTest:
 
     def harddisk_write_test(self) -> HardDiskResult:
         # write test
-        total_written_size = 0
+        total_written_round = 0
         write_start = time.perf_counter()
 
         print(f"[INFO] Starting HardDisk write test ...")
@@ -54,7 +56,7 @@ class HardDiskTest:
         with open(self.file_path, "wb") as file:
             while True:
                 file.write(self.data_block)
-                total_written_size += 1
+                total_written_round += 1
                 # protect my disk
                 if time.perf_counter() - write_start >= self.duration:
                     break
@@ -62,18 +64,18 @@ class HardDiskTest:
         write_end = time.perf_counter()
         write_time = write_end - write_start
         # one block is 256 kb
-        self.written_size = 4 * total_written_size
+        self.written_size = (self.block_size * total_written_round) / (1024 * 1024)
         write_speed = self.written_size / write_time
         print(f"[INFO] Write Test finished")
         return HardDiskResult(
-            write_speed = write_speed,
-            write_time_used = write_time,
-            size_tested = self.written_size,
-            mode = "write_test",
-            read_speed = 0,
-            read_time_used = 0
+            write_speed=write_speed,
+            write_time_used=write_time,
+            size_tested=self.written_size,
+            mode="write_test",
+            read_speed=0,
+            read_time_used=0,
         )
-    
+
     def harddisk_read_test(self) -> HardDiskResult:
         # Read test
         print(f"[INFO] Starting HardDisk write test ...")
@@ -95,14 +97,15 @@ class HardDiskTest:
 
         print(f"[INFO] Read Test finished")
         return HardDiskResult(
-            read_speed = read_speed,
-            read_time_used = read_time,
-            size_tested = self.written_size,
-            mode = "read_test",
-            write_speed = 0,
-            write_time_used = 0
+            read_speed=read_speed,
+            read_time_used=read_time,
+            size_tested=self.written_size,
+            mode="read_test",
+            write_speed=0,
+            write_time_used=0,
         )
-    
+
+
 if __name__ == "__main__":
     tester = HardDiskTest()
     write_result = tester.harddisk_write_test()
