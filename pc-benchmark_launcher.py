@@ -1,6 +1,6 @@
 import cpu_test.cpu_test as cpu_test
 import hard_disk_test.harddisk_test as harddisk_test
-import webbrowser
+import webbrowser, os
 
 if __name__ == "__main__":
     cpu_tester = cpu_test.CpuTest(calculate_time=20)
@@ -17,6 +17,10 @@ if __name__ == "__main__":
         f"Write Speed: {write_result.write_speed:.2f} MB/s<br>"
         f"Read Speed: {read_result.read_speed:.2f} MB/s"
     )
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    html_path = os.path.join(script_dir, "index.html")
+
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
