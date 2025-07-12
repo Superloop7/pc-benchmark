@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 # @dataclass can replace __init__
 class HardDiskResult:
+    mode: str
     # the speed unit is MB/s
     write_speed: float
     read_speed: float
@@ -23,10 +24,10 @@ class HardDiskResult:
         )
 
     def __str__(self):
-        return (
-            f"[HARDDISK RESULT] Write Speed : {self.write_speed:.2f} MB/s\n"
-            f"[HARDDISK RESULT] Read  Speed : {self.read_speed:.2f} MB/s\n"
-        )
+        if self.mode == "write_test":
+            return f"[HARDDISK RESULT] Write Speed : {self.write_speed:.2f} MB/s"
+        elif self.mode == "read_test":
+            return f"[HARDDISK RESULT] Read  Speed : {self.read_speed:.2f} MB/s"
     
 class HardDiskTest:
     def __init__(self, file_path="harddisk_test_temp.bin", duration=1, block_size=256 * 1024):
@@ -41,6 +42,7 @@ class HardDiskTest:
         total_written_size = 0
         write_start = time.perf_counter()
 
+        print(f"[INFO] Starting HardDisk write test ...")
         # write the binary file
         with open(self.file_path, "wb") as file:
             while True:
@@ -59,15 +61,17 @@ class HardDiskTest:
         # one block is 256 kb
         self.written_size = 4 * total_written_size
         write_speed = self.written_size / write_time
-
+        print(f"[INFO] Write Test finished")
         return HardDiskResult(
             write_speed=write_speed,
             size_tested= self.written_size,
-            write_time=write_time
+            write_time=write_time,
+            mode = "write_test"
         )
     
     def harddisk_read_test(self) -> HardDiskResult:
         # Read test
+        print(f"[INFO] Starting HardDisk write test ...")
         read_start = time.perf_counter()
         with open(self.file_path, "rb") as file:
             # Read the file in blocks to minimize memory usage
@@ -75,4 +79,23 @@ class HardDiskTest:
                 pass
         read_end = time.perf_counter()
         read_time = read_end - read_start
-        read_speed = self.written_size
+        read_speed = self.written_size / read_time
+
+        # clean the binary file
+        try:
+            os.remove(self.file_path)
+        except Exception as e:
+            print(f"[WARN] Failed to remove the temp file: {e}")
+        print(f"[INFO] Read Test finished")
+        return HardDiskTest(
+            read_speed=read_speed,
+            read_time=read_time,
+            mode = "read_test"
+        )
+    
+if __name__ == "__main__":
+    tester = HardDiskTest()
+    write_result = tester.harddisk_wirte_test()
+    print(write_result)
+    read_result = tester.harddisk_read_test()
+    print(write_result)

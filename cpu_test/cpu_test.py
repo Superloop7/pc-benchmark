@@ -44,7 +44,9 @@ class CpuTest:
         total_rounds = self.single_core_work(self.calculate_time)
         single_scores = total_rounds / 1e5
         print("[INFO] Single-core test complete.")
-        return CPUTestResult(mode="single", scores = single_scores)
+        return CPUTestResult(mode="single",
+                            scores = single_scores
+                            )
 
     def run_multi(self, cpu_count=None) -> CPUTestResult:
         cpu_count = os.cpu_count()
@@ -64,7 +66,11 @@ class CpuTest:
         total_rounds = sum(round_list)
         multi_scores = total_rounds / 1e5
         print("[INFO] Multi-core test complete.")
-        return CPUTestResult(mode="multi", scores = multi_scores, cpu_count= cpu_count)
+        return CPUTestResult(
+            mode="multi",
+            scores = multi_scores,
+            cpu_count= cpu_count
+            )
 
     def run_all(self):
         single = self.run_single()
