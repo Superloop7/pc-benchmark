@@ -36,21 +36,43 @@ class HardDiskTest:
         # one binary 0 is 1 byte each round 256KB
         self.data_block = b"0" * block_size
 
-    def harddisk_test(self) -> HardDiskResult:
+    def harddisk_wirte_test(self) -> HardDiskResult:
         # write test
         total_written_size = 0
         write_start = time.perf_counter()
 
         # write the binary file
-        with open(self.file_path, "wb") as f:
+        with open(self.file_path, "wb") as file:
             while True:
-                f.write(self.data_block)
+                file.write(self.data_block)
                 total_written_size += 1
                 # write data to memory
-                f.flush()
+                file.flush()
                 # synchronize to harddisk
-                os.fsync(f.fileno())
+                os.fsync(file.fileno())
                 # protect my disk
-                total_used_time = time.perf_counter()
-                if total_used_time - write_start >= self.duration:
+                if time.perf_counter() - write_start >= self.duration:
                     break
+
+        write_end = time.perf_counter()
+        write_time = write_end - write_start
+        # one block is 256 kb
+        self.written_size = 4 * total_written_size
+        write_speed = self.written_size / write_time
+
+        return HardDiskResult(
+            write_speed=write_speed,
+            size_tested= self.written_size,
+            write_time=write_time
+        )
+    
+    def harddisk_read_test(self) -> HardDiskResult:
+        # Read test
+        read_start = time.perf_counter()
+        with open(self.file_path, "rb") as file:
+            # Read the file in blocks to minimize memory usage
+            while file.read(self.block_size):
+                pass
+        read_end = time.perf_counter()
+        read_time = read_end - read_start
+        read_speed = self.written_size
