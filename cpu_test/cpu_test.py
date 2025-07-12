@@ -4,8 +4,9 @@ import concurrent.futures
 from dataclasses import dataclass
 
 
+# @dataclass can replace __init__
 @dataclass
-class TestResult:
+class CPUTestResult:
     mode: str         # 'single' or 'multi'
     # rounds: int
     scores: float
@@ -23,6 +24,7 @@ class CpuTest:
         self.calculate_time = calculate_time
     def single_core_work(self, seconds):
         start = time.time()
+        # print(f"single core test start")
         factor = 1
         pi = 0
         round_count = 0
@@ -34,16 +36,17 @@ class CpuTest:
                 pi -= 4 / factor
             factor += 2
             round_count += 1
+        # print(f"the single core test is finished")
         return round_count
 
-    def run_single(self) -> TestResult:
+    def run_single(self) -> CPUTestResult:
         print("[INFO] Starting single-core test for 20 seconds...")
         total_rounds = self.single_core_work(self.calculate_time)
         single_scores = total_rounds / 1e5
         print("[INFO] Single-core test complete.")
-        return TestResult(mode="single", scores = single_scores)
+        return CPUTestResult(mode="single", scores = single_scores)
 
-    def run_multi(self, cpu_count=None) -> TestResult:
+    def run_multi(self, cpu_count=None) -> CPUTestResult:
         cpu_count = os.cpu_count()
         if cpu_count is None:
             cpu_count = 1
@@ -61,7 +64,7 @@ class CpuTest:
         total_rounds = sum(round_list)
         multi_scores = total_rounds / 1e5
         print("[INFO] Multi-core test complete.")
-        return TestResult(mode="multi", scores = multi_scores, cpu_count= cpu_count)
+        return CPUTestResult(mode="multi", scores = multi_scores, cpu_count= cpu_count)
 
     def run_all(self):
         single = self.run_single()
